@@ -26,11 +26,31 @@ def search_for_cia(search_dir=".", extension=".cia"):
     return found
 
 
+def parse_cia(file_path):
+    # initial parsing attempt
+    try:
+        cia = CIAReader(file_path)
+        print("Title ID:", cia.tmd.title_id)
+        app = cia.contents[CIASection.Application]
+        app_title = app.exefs.icon.get_app_title("English")
+        print("Appliation Title:\t", app_title.short_desc)
+        print("Application Description:\t", app_title.long_desc)
+        print("Application Publisher:\t", app_title.publisher)
+        # todo: add more parsing
+    except CIAError:
+        print("Error occured while trying to read cia file:\n\t{}".format(file))
+    print("path: {}".format(file_path))
+
+
 def main():
     # initialize
     db_path = get_db()
     files = search_for_cia()
-    print(files)
+    print("\nfound files:\t{}\n".format(files))
+    for f in files:
+        print("---")
+        parse_cia(f)
+        print("---\n")
 
 
 if __name__ == "__main__":
